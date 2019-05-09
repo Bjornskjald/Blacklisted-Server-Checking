@@ -100,9 +100,8 @@ USERBOT.on('guildMemberAdd', member => {
 								checkUser(member.id).then(function(foundServers){
 									if(foundServers){
 										switch(CONFIG.Pound_Level){
+											// KICK THE USER
 											case 'KICK':
-
-												// KICK THE USER
 												EXECUTIONER.guilds.get(guildID).fetchMember(member.id).then( TARGET => {
 													let configKick=CONFIG.Kicked_Message.replace(/%SPOOFSERVER%/g, foundServers).replace(/%SERVERNAME%/g, CONFIG.Home_Server_Names[index]);
 													let kickMessage=new Discord.RichEmbed().setColor('ff0000').setThumbnail('https://i.imgur.com/Qa1ik69.jpg?1').setDescription(configKick);
@@ -114,6 +113,20 @@ USERBOT.on('guildMemberAdd', member => {
 														return EXECUTIONER.channels.get(CONFIG.Command_Channels[index]).send(kickConfirmation).catch(console.error);
 													});
 												}).catch(console.error); break;
+											// ADD A ROLE TO THE USER
+											case 'ROLE':
+												EXECUTIONER.guilds.get(guildID).fetchMember(member.id).then( TARGET => {
+													let configRole=CONFIG.Role_Message.replace(/%SPOOFSERVER%/g, foundServers).replace(/%SERVERNAME%/g, CONFIG.Home_Server_Names[index]);
+													let RoleMessage=new Discord.RichEmbed().setColor('ff0000').setThumbnail('https://i.imgur.com/Qa1ik69.jpg?1').setDescription(configRole);
+													TARGET.send(kickMessage).catch(console.error).then( m => {
+														TARGET.kick('Member of a spoofing server.').catch(console.error);
+														let kickConfirmation=new Discord.RichEmbed().setColor('00ff00')
+															.setDescription('Kicked '+TARGET+'.')
+															.setFooter(postTime(CONFIG.Timezone));
+														return EXECUTIONER.channels.get(CONFIG.Command_Channels[index]).send(kickConfirmation).catch(console.error);
+													});
+												}).catch(console.error); break;
+											// BAN THE USER
 											case 'BAN':
 												EXECUTIONER.guilds.get(guildID).fetchMember(member.id).then( TARGET => {
 													let configBan=CONFIG.Banned_Message.replace(/%SPOOFSERVER%/g, foundServers).replace(/%SERVERNAME%/g, CONFIG.Home_Server_Names[index]);
@@ -177,7 +190,7 @@ USERBOT.on('guildMemberAdd', member => {
 								else{
 									foundServers='';
 									checkUser(member.id).then(function(foundServers){
-										// KICK OR BAN THEM IF THEY ARE STILL IN A SPOOF SERVER
+										// KICK, BAN OR ROLE THEM IF THEY ARE STILL IN A SPOOF SERVER
 										if(foundServers){
 											switch(CONFIG.Pound_Level){
 												case 'KICK':
@@ -186,6 +199,21 @@ USERBOT.on('guildMemberAdd', member => {
 														let kickMessage=new Discord.RichEmbed().setColor('ff0000')
 															.setThumbnail('https://i.imgur.com/Qa1ik69.jpg?1')
 															.setDescription(configKick)
+															.setFooter(postTime(CONFIG.Timezone));
+														TARGET.send(kickMessage).catch(console.error).then( m => {
+															TARGET.kick('Member of a spoofing server.').catch(console.error);
+															let kickConfirmation=new Discord.RichEmbed().setColor('00ff00')
+																.setDescription('Kicked '+TARGET+'.')
+																.setFooter(postTime(CONFIG.Timezone));
+															return EXECUTIONER.channels.get(CONFIG.Command_Channels[index]).send(kickConfirmation).catch(console.error);
+														});
+													}).catch(console.error); break;
+												case 'ROLE':
+													EXECUTIONER.guilds.get(guildID).fetchMember(member.id).then( TARGET => {
+														let configRole=CONFIG.Role_Message.replace(/%SPOOFSERVER%/g, foundServers).replace(/%SERVERNAME%/g, CONFIG.Home_Server_Names[index]);
+														let kickMessage=new Discord.RichEmbed().setColor('ff0000')
+															.setThumbnail('https://i.imgur.com/Qa1ik69.jpg?1')
+															.setDescription(configRole)
 															.setFooter(postTime(CONFIG.Timezone));
 														TARGET.send(kickMessage).catch(console.error).then( m => {
 															TARGET.kick('Member of a spoofing server.').catch(console.error);
